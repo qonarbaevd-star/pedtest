@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="kaa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nókis rayonı pedagoglar attestaciyası</title>
+<style>
+:root{--ink:#f4f7ff;--mut:#b7c2e0;--line:rgba(255,255,255,.18);--glass:rgba(255,255,255,.08);--blue:#3d7bff;--green:#2dff9a;--red:#ff4d6d;--amber:#ffb84a;--ease:all .3s cubic-bezier(.4,0,.2,1)}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;min-height:100vh;color:var(--ink);font:15px/1.45 "Segoe UI",Roboto,system-ui,sans-serif;background:radial-gradient(900px 520px at 10% -10%,rgba(124,58,237,.55),transparent 60%),radial-gradient(800px 520px at 100% 8%,rgba(0,200,255,.30),transparent 60%),linear-gradient(160deg,#07102f 0%,#101a52 48%,#3a1a7a 100%) fixed}
+header{padding:18px 24px;background:rgba(10,18,60,.45);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:22px;font-weight:700}
+header p{margin:2px 0 0;color:var(--mut);font-size:13px}
+.demo{background:rgba(255,184,74,.14);color:#ffd9a0;border-bottom:1px solid rgba(255,184,74,.35);padding:8px 24px;font-size:13px}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+h2{font-size:18px;margin:26px 0 12px}
+.stat,.card,table,dialog{background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);box-shadow:0 20px 40px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.16)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;perspective:900px}
+.stat,.card{border-radius:16px;transition:var(--ease)}
+.stat{padding:14px 16px}
+.stat:hover,.card:hover{transform:translateY(-6px) rotateX(2deg);box-shadow:0 30px 52px rgba(0,0,0,.4),0 0 0 1px rgba(130,170,255,.5)}
+.stat b{display:block;font-size:27px;font-weight:700}
+.stat span{font-size:13px;color:var(--mut)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+input,select,textarea,button{font:inherit;color:var(--ink)}
+input,select,textarea{border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:rgba(255,255,255,.07);transition:var(--ease)}
+input::placeholder,textarea::placeholder{color:#9aa7cc}
+input:focus,select:focus,textarea:focus{outline:0;border-color:#6d9bff;box-shadow:0 0 0 3px rgba(61,123,255,.35),0 0 18px rgba(61,123,255,.4)}
+option{background:#141b55;color:#fff}
+input[type=search]{flex:1;min-width:180px}
+button{cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.09);border-radius:12px;padding:8px 14px;transition:var(--ease)}
+button:hover{background:rgba(255,255,255,.17);transform:translateY(-1px)}
+button:focus-visible,.card:focus-visible{outline:2px solid #9bbcff;outline-offset:2px}
+.primary{background:linear-gradient(135deg,#3d7bff,#7a4dff);border-color:transparent;box-shadow:0 8px 22px rgba(61,123,255,.45)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;perspective:1000px}
+.card{padding:15px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-height:160px}
+.card h3{margin:0;font-size:15px}
+.type,.note{font-size:13px;color:var(--mut)}
+.nums{display:grid;grid-template-columns:repeat(2,1fr);gap:2px 10px;font-size:13px;color:var(--mut)}
+.nums b{color:var(--ink)}
+.bar{display:flex;height:9px;border-radius:6px;overflow:hidden;background:rgba(255,255,255,.14);margin-top:auto}
+.bar i{display:block;height:100%;box-shadow:0 0 10px currentColor}
+.pct{font-size:13px;font-weight:600}
+.empty{padding:28px;text-align:center;color:var(--mut);border:1px dashed var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;border-radius:16px;overflow:hidden}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:rgba(255,255,255,.1);font-size:13px;font-weight:600}
+tbody tr:hover{background:rgba(255,255,255,.05)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:7px 10px;font-size:13px;color:var(--mut);background:transparent;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{font-weight:700}
+.seg button[aria-pressed=true][data-v=unmarked]{background:rgba(255,255,255,.24);color:#fff}
+.seg button[aria-pressed=true][data-v=present]{background:var(--green);color:#03281a;box-shadow:0 0 16px rgba(45,255,154,.6)}
+.seg button[aria-pressed=true][data-v=absent]{background:var(--red);color:#2a0009;box-shadow:0 0 16px rgba(255,77,109,.6)}
+.score{width:90px}
+.warn{color:var(--amber)}
+.back{margin-bottom:8px}
+dialog{color:var(--ink);background:rgba(18,24,72,.85);border-radius:16px;padding:20px;width:min(470px,94vw)}
+dialog::backdrop{background:rgba(5,8,30,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+dialog label{display:block;margin:10px 0 4px;font-weight:600;font-size:14px}
+dialog select,dialog textarea,dialog input{width:100%}
+.err{color:#ff8fa3;font-size:13px;min-height:18px}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(20,30,90,.92);border:1px solid var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;display:none;max-width:92vw;z-index:9;box-shadow:0 14px 30px rgba(0,0,0,.4)}
+#toast.bad{background:rgba(160,20,50,.92)}
+@media(max-width:720px){
+ table{background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+ table,thead,tbody,tr,td{display:block}thead{display:none}
+ tr{background:var(--glass);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;padding:6px 4px;box-shadow:0 12px 26px rgba(0,0,0,.28)}
+ td{border:0;padding:5px 10px}
+ td::before{content:attr(data-l);display:block;font-size:12px;color:var(--mut)}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.stat:hover,.card:hover,button:hover{transform:none}}
+
+header{display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#3b82f6,#7c3aed 60%,#06b6d4);box-shadow:0 8px 20px rgba(80,100,255,.45),inset 0 1px 0 rgba(255,255,255,.4)}
+.logo .ic{width:26px;height:26px}
+.ic{width:1.1em;height:1.1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.16em;flex:none}
+.stat,.card{position:relative;overflow:hidden}
+.stat::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,transparent,var(--ac,#3d7bff),transparent)}
+.stat::after,.card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.07) 50%,transparent 65%)}
+.chip{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;margin-bottom:8px;font-size:17px;background:linear-gradient(135deg,var(--ac),rgba(255,255,255,.18));box-shadow:0 6px 14px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat b{text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.type{display:inline-block;align-self:flex-start;padding:2px 9px;border-radius:8px;background:rgba(6,182,212,.14);border:1px solid rgba(6,182,212,.35);color:#7be3f5;font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+button.b3d{display:inline-flex;align-items:center;gap:8px;border:0;color:#fff;font-weight:600;padding:9px 16px;border-radius:12px;margin-bottom:5px;box-shadow:0 5px 0 var(--sh),0 12px 20px var(--gl)}
+button.b3d:hover{transform:translateY(-1px)}
+button.b3d:active{transform:translateY(4px);box-shadow:0 1px 0 var(--sh),0 4px 10px var(--gl)}
+button.b3d-blue{--sh:#1e40af;--gl:rgba(59,130,246,.4);background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+button.b3d-green{--sh:#065f46;--gl:rgba(16,185,129,.35);background:linear-gradient(135deg,#10b981,#047857)}
+button.b3d-purple{--sh:#5b21b6;--gl:rgba(139,92,246,.4);background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
+button.b3d-rose{--sh:#9f1239;--gl:rgba(244,63,94,.4);background:linear-gradient(135deg,#f43f5e,#be123c)}
+button.b3d:hover{filter:brightness(1.08)}
+.back{margin-bottom:12px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:rgba(10,15,45,.6)}
+::-webkit-scrollbar-thumb{background:rgba(120,130,255,.45);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:rgba(140,150,255,.75)}
+@media(prefers-reduced-motion:reduce){button.b3d:hover,button.b3d:active{transform:none}}
+select{max-width:100%}#sb,#tb{max-width:min(380px,100%)}
+.tools [data-ex]{margin-left:auto}
+
+header{justify-content:space-between;flex-wrap:wrap}
+#bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#bar button.b3d{margin-bottom:5px}
+.pill{display:inline-block;padding:2px 10px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--line)}
+.pill-present{background:rgba(45,255,154,.16);color:var(--green);border-color:rgba(45,255,154,.4)}
+.pill-absent{background:rgba(255,77,109,.16);color:#ff8fa3;border-color:rgba(255,77,109,.4)}
+.pill-unmarked{color:var(--mut)}
+td .note{margin-top:2px}
+.tel{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 12px;border-radius:12px;background:rgba(61,126,255,.16);color:#bcd3ff;font-weight:600;text-decoration:none;white-space:nowrap}.tel:active,.tel:hover{background:rgba(61,126,255,.32)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/></symbol>
+<symbol id="i-school" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6M12 10h.01"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14c2.8 0 4.5 1.8 4.5 4.5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-pie" viewBox="0 0 24 24"><path d="M12 3v9h9"/><path d="M20.5 15A9 9 0 1 1 9 3.5"/></symbol>
+<symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 14l-1.5 7 5-2.5 5 2.5-1.5-7"/></symbol>
+<symbol id="i-filewarn" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11.5V15M12 18h.01"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 3h3l1.4 4.2-2 1.4a12 12 0 0 0 5.4 5.4l1.4-2L20 13.4v3A2.6 2.6 0 0 1 17.4 19 14.4 14.4 0 0 1 5 6.6 2.6 2.6 0 0 1 6.6 3z"/></symbol><symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 0 1 5 5L10 17a2 2 0 0 1-3-3l7-7"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9.5 16h-19z"/><path d="M12 10v4.5M12 17.5h.01"/></symbol>
+</defs></svg>
+<header><div style="display:flex;align-items:center;gap:14px"><div class="logo"><svg class="ic"><use href="#i-cap"/></svg></div><div><h1>Nókis rayonı pedagoglar attestaciyası</h1><p>Attestaciyaǵa qatnasıwdı baqlaw platforması</p></div></div><div id="bar"></div></header>
+<main id="app"></main>
+<dialog id="dlg"></dialog>
+<div id="toast" role="status"></div>
+<script>
+// ---------- Konfiguraciya ----------
+// Supabase: Project Settings -> API bólimindegi "Project URL" hám "publishable (anon) key".
+// Bul kilt ashıq paydalanıwǵa mólsherlengen. "service_role" kiltin bul fayılǵa ESHQASHAN jazbań.
+const CONFIG = { SUPABASE_URL: "https://ngdookupzhqltkjuznte.supabase.co", SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZG9va3VwemhxbHRranV6bnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1ODEzNzIsImV4cCI6MjEwODE1NzM3Mn0.bFDp903PWGNq1HMSxw59KhGBFFLBAWhJ598-miA_-mw" };
+// [bazadaǵı mán, kórsetiletuǵın atama]
+const CATS = [["Mutaxasis", "Mutaxasis"], ["Ikkinchi toifa", "Ekinshi toifa"], ["Birinchi toifa", "Birinshi toifa"], ["Oliy toifa", "Joqarı toifa"]];
+const catName = v => (CATS.find(c => c[0] === v) || [v, v || "—"])[1];
+const REASONS = ["Densawlıq jaǵdayı", "Xızmetlik sebep", "Otbasılıq jaǵday", "Basqa tiykarlı sebep", "Sebebi házirshe anıqlanbaǵan"];
+const ST = { unmarked: "Belgilenbegen", present: "Qatnastı", absent: "Qatnaspadı" };
+const GROUP_NAME = { mektep: "Mektep", mtt: "MTT", basqa: "Basqa mekeme" };
+const grp = t => t === "mtt" ? "mtt" : (t === "umumta_lim" || t === "itma") ? "mektep" : "basqa";
+const ERR = {
+  pin_format: "PIN formatı qáte.", pin_wrong: "PIN qáte.", session_invalid: "Sessiya tamamlandı. Qaytadan kiriń.",
+  forbidden: "Bul háreketke ruqsat joq.", not_found: "Jazıw tabılmadı.", score_range: "Ball 0 hám 100 aralıǵında bolıwı kerek.",
+  not_present: "Ball tek qatnasqan muǵallimge kiritiledi.", bad_reason: "Sebep dizimde joq.", note_long: "Túsindirme 1000 belgiden uzın bolmawı kerek.",
+  pin_weak: "Ápiwayı PIN (1111, 1234 h.t.b.) ruqsat etilmeydi.", invalid_data: "Maǵlıwmat qáte kiritilgen.", bad_status: "Jaǵday qáte."
+};
+
+// ---------- Járdemshi funkciyalar ----------
+const $ = s => document.querySelector(s);
+const ic = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nat = (a, b) => a.localeCompare(b, undefined, { numeric: true });
+const LOADING = '<div class="empty">Júklenbekte...</div>';
+function toast(m, bad) { const t = $("#toast"); t.textContent = m; t.className = bad ? "bad" : ""; t.style.display = "block"; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = "none", 3600); }
+const go = h => { location.hash = h ? "#/" + h : ""; };
+function dlg(html) { const d = $("#dlg"); d.innerHTML = html; if (!d.open) d.showModal(); return d; }
+const closeDlg = () => { const d = $("#dlg"); if (d.open) d.close(); };
+const msg = r => r.error === "locked" ? `Kóp qáte urınıs. ${r.minutes} minutqa bloklandı.`
+  : r.error === "pin_wrong" && r.attempts_left != null ? `PIN qáte. Qalǵan urınıs: ${r.attempts_left}.` : (ERR[r.error] || "Qátelik: " + r.error);
+
+// ---------- Kiriw jaǵdayı ----------
+let auth = null;
+try { auth = JSON.parse(sessionStorage.getItem("att-auth") || "null"); } catch (e) { auth = null; }
+const tok = () => auth ? auth.token : null;
+const isAdmin = () => !!auth && auth.role === "admin";
+function setAuth(a) {
+  auth = a;
+  try { a ? sessionStorage.setItem("att-auth", JSON.stringify(a)) : sessionStorage.removeItem("att-auth"); } catch (e) { /* sessionStorage joq bolsa, bet jańalanǵanda qaytadan kiriledi */ }
+  drawBar();
+}
+function drawBar() {
+  $("#bar").innerHTML = !auth ? `<button class="b3d b3d-purple" data-act="admin-login">${ic("users")}Admin</button>`
+    : isAdmin() ? `<button class="b3d b3d-blue" data-go="admin">${ic("pie")}Admin panel</button><button data-act="logout">Shıǵıw</button>`
+    : `<span class="note">${esc(auth.instName)}</span><button data-act="logout">Shıǵıw</button>`;
+}
+
+// ---------- Server menen baylanıs ----------
+async function rpc(fn, args) {
+  let r;
+  try {
+    const hdr = { "Content-Type": "application/json", apikey: CONFIG.SUPABASE_ANON_KEY };
+    if (CONFIG.SUPABASE_ANON_KEY.startsWith("eyJ")) hdr.Authorization = "Bearer " + CONFIG.SUPABASE_ANON_KEY;   // jańa "sb_publishable_" kiltlerine Authorization kerek emes
+    r = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: "POST", headers: hdr, body: JSON.stringify(args || {}) });
+  } catch (e) { toast("Internet baylanısı joq. Qaytadan urınıp kóriń.", true); throw e; }
+  let j = null; try { j = await r.json(); } catch (e) { /* bos juwap */ }
+  if (!r.ok) { toast("Server qátesi: " + ((j && j.message) || r.status), true); throw new Error("http " + r.status); }
+  if (j && j.ok === false && j.error === "session_invalid") { setAuth(null); toast(ERR.session_invalid, true); }
+  return j;
+}
+
+// ---------- Excel (.xls) eksport ----------
+const safe = v => { v = String(v ?? ""); return /^[=+\-@\t\r]/.test(v) ? "'" + v : v; };
+function saveXls(name, head, rows) {
+  const tr = (r, t) => "<tr>" + r.map(c => `<${t}>${esc(safe(c))}</${t}>`).join("") + "</tr>";
+  const html = `<html><head><meta charset="utf-8"></head><body><table border="1">${tr(head, "th")}${rows.map(r => tr(r, "td")).join("")}</table></body></html>`;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([html], { type: "application/vnd.ms-excel" }));
+  a.download = `${name}_${new Date().toISOString().slice(0, 10)}.xls`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+const rowCells = (inst, t, priv) => [inst, t.name, t.subject, catName(t.category), ST[t.status], t.score ?? "", ...(priv ? [t.reason ?? "", t.note ?? "", t.phone ?? ""] : [])];
+const rowHead = priv => ["Mekeme", "F.A.Á.", "Pán", "Kategoriya", "Qatnasıw jaǵdayı", "Ball", ...(priv ? ["Qatnaspaw sebebi", "Túsindirme", "Telefon"] : [])];
+
+// ---------- Bas bet (ashıq): mekeme kartochkaları ----------
+let INSTS = [];
+const view = { type: "", sort: "name" };
+async function loadInsts() { if (!INSTS.length) INSTS = await rpc("list_institutions"); return INSTS; }
+async function home() {
+  $("#app").innerHTML = `<h2>Mekemeler</h2>
+  <div class="tools"><select id="ty" aria-label="Mekeme túri"><option value="">Barlıq túrler</option><option value="mektep">Mektepler</option><option value="mtt">MTT</option><option value="basqa">Basqa mekemeler</option></select>
+   <select id="so" aria-label="Tártiplew"><option value="name">Atı boyınsha</option><option value="teachers">Muǵallimler sanı boyınsha</option></select>
+   <button class="b3d b3d-purple" id="clr">${ic("reset")}Filtrlerdi tazalaw</button></div>
+  <p class="note" id="cnt"></p><div class="grid" id="grid">${LOADING}</div>`;
+  $("#ty").value = view.type; $("#so").value = view.sort;
+  $("#ty").onchange = e => { view.type = e.target.value; drawGrid(); };
+  $("#so").onchange = e => { view.sort = e.target.value; drawGrid(); };
+  $("#clr").onclick = () => { view.type = ""; view.sort = "name"; home(); };
+  try { await loadInsts(); } catch (e) { $("#grid").innerHTML = '<div class="empty">Maǵlıwmat júklenbedi. Betti jańalap kóriń.</div>'; return; }
+  drawGrid();
+}
+function drawGrid() {
+  const rows = INSTS.filter(i => !view.type || grp(i.type) === view.type)
+    .sort((a, b) => view.sort === "teachers" ? b.teachers - a.teachers : nat(a.name, b.name));
+  $("#cnt").textContent = `Tabılǵan mekemeler: ${rows.length}`;
+  $("#grid").innerHTML = rows.length ? rows.map(i => `<div class="card" tabindex="0" role="link" data-go="i/${i.id}" aria-label="${esc(i.name)}: muǵallimlerdi ashıw">
+    <h3>${esc(i.name)}</h3><div class="type">${GROUP_NAME[grp(i.type)]}</div>
+    <div class="nums"><span>Muǵallimler: <b>${i.teachers}</b></span><span>Arızalar: <b>${i.rows}</b></span></div></div>`).join("")
+    : '<div class="empty">Hesh nárse tabılmadı. Filtrlerdi tazalań.</div>';
+}
+
+// ---------- Mekeme muǵallimleri ----------
+const tv = { q: "", st: "", subj: "" };
+let D = null;
+async function detail(id) {
+  $("#app").innerHTML = LOADING;
+  let r;
+  try { await loadInsts(); r = await rpc("list_teachers", { p_institution: id, p_token: tok() }); } catch (e) { $("#app").innerHTML = '<div class="empty">Maǵlıwmat júklenbedi.</div>'; return; }
+  if (r.ok === false) { if (r.error === "session_invalid") return detail(id); toast(msg(r), true); return go(""); }
+  const inst = INSTS.find(i => i.id === id);
+  D = { id, name: inst ? inst.name : "Mekeme", rows: r.rows, priv: r.privileged };
+  if (tv.subj && !D.rows.some(x => x.subject === tv.subj)) tv.subj = "";
+  drawDetail();
+}
+function drawDetail() {
+  const q = tv.q.trim().toLowerCase();
+  const list = D.rows.filter(t => (!q || t.name.toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q) || (t.phone || "").includes(q))
+    && (!tv.st || t.status === tv.st) && (!tv.subj || t.subject === tv.subj));
+  const subs = [...new Set(D.rows.map(t => t.subject))].sort(nat);
+  const pill = t => `<span class="pill pill-${t.status}">${ST[t.status]}</span>`;
+  $("#app").innerHTML = `<button class="back b3d b3d-blue" data-go="">${ic("back")}Mekemelerge qaytıw</button>
+  <h2 style="margin-top:6px">${esc(D.name)}</h2>
+  <p class="note">Jazıwlar: ${D.rows.length}. ${D.priv ? "Siz bul mekemeniń maǵlıwmatların ózgerte alasız." : "Tek kóriw rejimi. Ózgertiw ushın PIN kiritiń."}</p>
+  ${D.priv ? "" : `<button class="b3d b3d-green" data-act="inst-login">${ic("check")}PIN kiriw</button>`}
+  <div class="tools"><input type="search" id="tq" placeholder="${D.priv ? "F.A.Á., ariza nomeri yamasa telefon" : "F.A.Á. yamasa ariza nomeri"}" value="${esc(tv.q)}" aria-label="Izlew">
+   <select id="ts" aria-label="Qatnasıw jaǵdayı"><option value="">Barlıq jaǵdaylar</option>${Object.entries(ST).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select>
+   <select id="tb" aria-label="Pán boyınsha filtr"><option value="">Barlıq pánler</option>${subs.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join("")}</select>
+   <button class="b3d b3d-green" data-act="export-detail">${ic("down")}Excel (.xls)</button></div>
+  ${list.length ? `<table><thead><tr><th>№</th><th>F.A.Á.</th><th>Pán</th><th>Kategoriya</th><th>Qatnasıw</th><th>Ball</th>${D.priv ? "<th>Sebep</th>" : ""}${isAdmin() ? "<th>Ámel</th>" : ""}</tr></thead><tbody>
+  ${list.map((t, n) => `<tr><td data-l="№">${n + 1}</td><td data-l="F.A.Á.">${esc(t.name)}<div class="note">${esc(t.id)}</div></td><td data-l="Pán">${esc(t.subject)}</td><td data-l="Kategoriya">${esc(catName(t.category))}</td>
+   <td data-l="Qatnasıw">${D.priv ? `<div class="seg" role="group" aria-label="Qatnasıw jaǵdayı">${Object.entries(ST).map(([k, v]) => `<button data-st="${esc(t.id)}" data-v="${k}" aria-pressed="${t.status === k}">${v}</button>`).join("")}</div>` : pill(t)}</td>
+   <td data-l="Ball">${D.priv && t.status === "present" ? `<input class="score" type="number" min="0" max="100" step="0.5" data-sc="${esc(t.id)}" value="${t.score ?? ""}" placeholder="0-100" aria-label="Ball">${t.score == null ? '<div class="note">Nátiyje kiritilmegen</div>' : ""}`
+     : t.status === "present" ? (t.score == null ? '<span class="note">Kiritilmegen</span>' : t.score) : '<span class="note">—</span>'}</td>
+   ${D.priv ? `<td data-l="Sebep">${t.status === "absent" ? `${esc(t.reason)}${t.note ? `<div class="note">${esc(t.note)}</div>` : ""}<button data-ed="${esc(t.id)}">Ózgertiw</button>` : '<span class="note">—</span>'}</td>` : ""}
+   ${isAdmin() ? `<td data-l="Ámel"><button data-pe="${esc(t.id)}">Maǵlıwmat</button></td>` : ""}</tr>`).join("")}
+  </tbody></table>` : '<div class="empty">Bul filtr boyınsha jazıw joq.</div>'}`;
+  $("#ts").value = tv.st; $("#tb").value = tv.subj;
+  $("#tq").oninput = e => { tv.q = e.target.value; const p = e.target.selectionStart; drawDetail(); const x = $("#tq"); x.focus(); x.setSelectionRange(p, p); };
+  $("#ts").onchange = e => { tv.st = e.target.value; drawDetail(); };
+  $("#tb").onchange = e => { tv.subj = e.target.value; drawDetail(); };
+}
+function exportDetail() {
+  const q = tv.q.trim().toLowerCase();
+  const rows = D.rows.filter(t => (!q || t.name.toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q)) && (!tv.st || t.status === tv.st) && (!tv.subj || t.subject === tv.subj));
+  if (!rows.length) return toast("Eksportlaw ushın jazıw joq. Filtrlerdi tekseriń.", true);
+  saveXls("attestaciya", rowHead(D.priv), rows.map(t => rowCells(D.name, t, D.priv)));
+  toast(`Fayl tayarlandı: ${rows.length} jazıw`);
+}
+
+// ---------- Muǵallimdi ózgertiw (PIN kerek, server tekseredi) ----------
+const redraw = () => D && D.mode === "subj" ? drawAdmin() : drawDetail();
+const reload = () => D && D.mode === "subj" ? admin() : detail(D.id);
+function bad(r) { toast(msg(r), true); if (r.error === "session_invalid" && D) reload(); }
+async function setStatus(a, v) {
+  const row = D.rows.find(x => x.id === a); if (!row || row.status === v) return;
+  if (v === "absent") return absentForm(row);
+  let r = await rpc("set_attendance", { p_token: tok(), p_app: a, p_status: v, p_force: false });
+  if (r.ok === false && (r.error === "score_exists" || r.error === "absence_exists")) {
+    if (!confirm(r.error === "score_exists" ? "Bul muǵallimge ball kiritilgen. Ball óshiriledi. Dawam etiwdi tastıyıqlaysızba?" : "Qatnaspaw sebebi óshiriledi. Dawam etiwdi tastıyıqlaysızba?")) return;
+    r = await rpc("set_attendance", { p_token: tok(), p_app: a, p_status: v, p_force: true });
+  }
+  if (r.ok === false) return bad(r);
+  Object.assign(row, { status: v, score: v === "present" ? row.score : null, reason: null, note: null, doc: null });
+  redraw(); toast("Jaǵday saqlandı: " + ST[v]);
+}
+async function setScore(a, raw) {
+  const row = D.rows.find(x => x.id === a); if (!row) return;
+  const n = raw.trim() === "" ? null : Number(raw);
+  if (n !== null && (!Number.isFinite(n) || n < 0 || n > 100)) { toast("Ball 0 hám 100 aralıǵında san bolıwı kerek.", true); return redraw(); }
+  const r = await rpc("set_score", { p_token: tok(), p_app: a, p_score: n });
+  if (r.ok === false) { bad(r); return redraw(); }
+  row.score = n; redraw(); toast("Ball saqlandı");
+}
+function absentForm(row) {
+  dlg(`<h3 style="margin-top:0">Qatnaspaw sebebi</h3><p class="note">${esc(row.name)}</p>
+   <label for="rs">Sebebi (májbúriy)</label><select id="rs"><option value="">Sebepti tańlań</option>${REASONS.map(r => `<option ${row.reason === r ? "selected" : ""}>${r}</option>`).join("")}</select>
+   <label for="nt">Túsindirme</label><textarea id="nt" rows="3" maxlength="1000">${esc(row.note || "")}</textarea>
+   <div class="note">Tastıyıqlawshı hújjet (anıqlama) júklew keyingi basqıshta qosıladı.</div><div class="err" id="er"></div>
+   <div class="row"><button data-act="close">Biykar etiw</button><button class="b3d b3d-rose" id="sv">Saqlaw</button></div>`);
+  $("#sv").onclick = async () => {
+    const reason = $("#rs").value; if (!reason) return $("#er").textContent = "Qatnaspaw sebebin tańlań. Sebepsiz saqlaw múmkin emes.";
+    const note = $("#nt").value.trim();
+    const r = await rpc("set_absence", { p_token: tok(), p_app: row.id, p_reason: reason, p_note: note || null });
+    if (r.ok === false) { $("#er").textContent = msg(r); if (r.error === "session_invalid") { closeDlg(); reload(); } return; }
+    Object.assign(row, { status: "absent", score: null, reason, note: note || null }); closeDlg(); redraw(); toast("Qatnaspaw sebebi saqlandı");
+  };
+}
+function personForm(row) {
+  dlg(`<h3 style="margin-top:0">Muǵallim maǵlıwmatı</h3><p class="note">${esc(row.id)}</p>
+   <label for="p-ln">Familiyası</label><input id="p-ln" value="${esc(row.last_name)}">
+   <label for="p-fn">Atı</label><input id="p-fn" value="${esc(row.first_name)}">
+   <label for="p-pn">Ákesiniń atı</label><input id="p-pn" value="${esc(row.patronymic || "")}">
+   <label for="p-ct">Kategoriyası</label><select id="p-ct">${CATS.map(c => `<option value="${c[0]}" ${row.category === c[0] ? "selected" : ""}>${c[1]}</option>`).join("")}</select>
+   <label for="p-ph">Telefon (998XXXXXXXXX)</label><input id="p-ph" value="${esc(row.phone || "")}">
+   <label for="p-in">Mekeme</label><select id="p-in">${[...INSTS].sort((a, b) => nat(a.name, b.name)).map(i => `<option value="${i.id}" ${i.id === D.id ? "selected" : ""}>${esc(i.name)}</option>`).join("")}</select>
+   <div class="err" id="er"></div><div class="row"><button data-act="close">Biykar etiw</button><button class="b3d b3d-blue" id="sv">Saqlaw</button></div>`);
+  $("#sv").onclick = async () => {
+    const patch = {}, v = id => $(id).value.trim();
+    if (v("#p-ln") !== row.last_name) patch.last_name = v("#p-ln");
+    if (v("#p-fn") !== row.first_name) patch.first_name = v("#p-fn");
+    if (v("#p-pn") !== (row.patronymic || "")) patch.patronymic = v("#p-pn");
+    if ($("#p-ct").value !== row.category) patch.category = $("#p-ct").value;
+    if (v("#p-ph") !== (row.phone || "")) patch.phone = v("#p-ph");
+    if ($("#p-in").value !== D.id) patch.institution_id = $("#p-in").value;
+    if (!Object.keys(patch).length) return closeDlg();
+    const r = await rpc("admin_update_person", { p_token: tok(), p_app: row.id, p_patch: patch });
+    if (r.ok === false) { $("#er").textContent = msg(r); return; }
+    closeDlg(); toast("Maǵlıwmat saqlandı"); detail(D.id);
+  };
+}
+
+// ---------- Kiriw oynaları ----------
+function instLogin() {
+  dlg(`<h3 style="margin-top:0">${esc(D.name)}</h3><p class="note">Ózgertiw ushın usı mekemeniń 4 sanlı PIN kodın kiritiń.</p>
+   <label for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" pattern="[0-9]*" placeholder="••••">
+   <div class="err" id="er"></div><div class="row"><button data-act="close">Biykar etiw</button><button class="b3d b3d-green" id="sv">Kiriw</button></div>`);
+  const submit = async () => {
+    const pin = $("#pin").value.trim(); if (!/^\d{4}$/.test(pin)) return $("#er").textContent = ERR.pin_format;
+    const r = await rpc("login_institution", { p_institution: D.id, p_pin: pin });
+    if (r.ok !== true) { $("#er").textContent = msg(r); $("#pin").value = ""; return; }
+    setAuth({ role: "institution", token: r.token, instId: r.institution_id, instName: r.institution_name }); closeDlg(); detail(D.id); toast("Kirdińiz: " + r.institution_name);
+  };
+  $("#sv").onclick = submit; $("#pin").onkeydown = e => { if (e.key === "Enter") submit(); }; $("#pin").focus();
+}
+function adminLogin() {
+  dlg(`<h3 style="margin-top:0">Administrator</h3><p class="note">Admin PIN kodın kiritiń.</p>
+   <label for="pin">PIN</label><input id="pin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" pattern="[0-9]*">
+   <div class="err" id="er"></div><div class="row"><button data-act="close">Biykar etiw</button><button class="b3d b3d-purple" id="sv">Kiriw</button></div>`);
+  const submit = async () => {
+    const pin = $("#pin").value.trim(); if (!/^\d{4,12}$/.test(pin)) return $("#er").textContent = ERR.pin_format;
+    const r = await rpc("login_admin", { p_pin: pin });
+    if (r.ok !== true) { $("#er").textContent = msg(r); $("#pin").value = ""; return; }
+    setAuth({ role: "admin", token: r.token }); closeDlg(); const before = location.hash; go("admin"); if (location.hash === before) route();
+  };
+  $("#sv").onclick = submit; $("#pin").onkeydown = e => { if (e.key === "Enter") submit(); }; $("#pin").focus();
+}
+async function logout() { const t = tok(); setAuth(null); try { await rpc("logout", { p_token: t }); } catch (e) { /* server menen baylanıs bolmasa da, bul qurılmada shıǵıldı */ } toast("Shıqtıńız"); route(); }
+
+// ---------- Admin panel ----------
+const av = { subj: "" }, avl = { q: "", st: "" };
+let OV = null, SR = null, SRP = false;   // SR: barlıq mekemelerdiń muǵallimleri (pán dizimi ushın)
+async function loadAll() {
+  toast("Maǵlıwmat jıynalmaqta...");
+  await loadInsts(); const out = []; let priv = true, failed = 0;
+  for (let k = 0; k < INSTS.length; k += 8) {
+    const part = await Promise.all(INSTS.slice(k, k + 8).map(i => rpc("list_teachers", { p_institution: i.id, p_token: tok() })));
+    part.forEach((r, j) => { const i = INSTS[k + j];
+      if (!r || r.ok === false) { failed++; return; }
+      priv = priv && !!r.privileged; r.rows.forEach(t => out.push(Object.assign(t, { instId: i.id, inst: i.name }))); });
+  }
+  SR = out; SRP = priv;
+  if (failed) toast(`${failed} mekemeniń maǵlıwmatı júklenbedi. Betti jańalap kóriń.`, true);
+}
+function phoneLink(p) {   // telefonnan basılsa, qońıraw qılıw ekranı ashıladı
+  let d = String(p || "").replace(/\D/g, ""); if (!d) return '<span class="note">—</span>';
+  if (d.length === 9) d = "998" + d;
+  const shown = /^998\d{9}$/.test(d) ? `+998 ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8, 10)} ${d.slice(10)}` : d;
+  return `<a class="tel" href="tel:+${d}" aria-label="Qońıraw qılıw: ${shown}">${ic("phone")}${shown}</a>`;
+}
+function subjRows() {
+  const q = avl.q.trim().toLowerCase();
+  return SR.filter(t => t.subject === av.subj && (!avl.st || t.status === avl.st)
+    && (!q || t.name.toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q) || (t.phone || "").includes(q)))
+    .sort((a, b) => nat(a.inst, b.inst) || nat(a.name, b.name));
+}
+function subjStats() {
+  const r = SR.filter(t => t.subject === av.subj), c = k => r.filter(t => t.status === k).length;
+  return { total: r.length, present: c("present"), absent: c("absent"), unmarked: c("unmarked"), scored: r.filter(t => t.status === "present" && t.score != null).length };
+}
+function subjList() {
+  if (!av.subj) return "";
+  if (!SR) return '<div class="empty">Pán dizimi júklenbedi. Betti jańalap kóriń.</div>';
+  D = { mode: "subj", name: av.subj, rows: SR, priv: SRP };   // setStatus / setScore / absentForm usı dizim menen islesin
+  const list = subjRows(), pill = t => `<span class="pill pill-${t.status}">${ST[t.status]}</span>`;
+  return `<h2>Pán: ${esc(av.subj)} — pedagoglar dizimi</h2>
+  <p class="note">Tabılǵan pedagoglar: ${list.length}. ${SRP ? "Bul dizimde qatnasıwdı belgilewge boladı." : "Tek kóriw rejimi."}</p>
+  <div class="tools"><input type="search" id="as-q" placeholder="F.A.Á., ariza nomeri yamasa telefon" value="${esc(avl.q)}" aria-label="Izlew">
+   <select id="as-s" aria-label="Qatnasıw jaǵdayı"><option value="">Barlıq jaǵdaylar</option>${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${avl.st === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+   <button class="b3d b3d-green" id="as-x">${ic("down")}Excel (.xls)</button></div>
+  ${list.length ? `<table><thead><tr><th>№</th><th>F.A.Á.</th><th>Mekeme</th>${SRP ? "<th>Telefon</th>" : ""}<th>Kategoriya</th><th>Qatnasıw</th><th>Ball</th>${SRP ? "<th>Sebep</th>" : ""}</tr></thead><tbody>
+  ${list.map((t, n) => `<tr><td data-l="№">${n + 1}</td><td data-l="F.A.Á.">${esc(t.name)}<div class="note">${esc(t.id)}</div></td>
+   <td data-l="Mekeme"><a href="#/i/${esc(t.instId)}">${esc(t.inst)}</a></td>${SRP ? `<td data-l="Telefon">${phoneLink(t.phone)}</td>` : ""}<td data-l="Kategoriya">${esc(catName(t.category))}</td>
+   <td data-l="Qatnasıw">${SRP ? `<div class="seg" role="group" aria-label="Qatnasıw jaǵdayı">${Object.entries(ST).map(([k, v]) => `<button data-st="${esc(t.id)}" data-v="${k}" aria-pressed="${t.status === k}">${v}</button>`).join("")}</div>` : pill(t)}</td>
+   <td data-l="Ball">${SRP && t.status === "present" ? `<input class="score" type="number" min="0" max="100" step="0.5" data-sc="${esc(t.id)}" value="${t.score ?? ""}" placeholder="0-100" aria-label="Ball">${t.score == null ? '<div class="note">Nátiyje kiritilmegen</div>' : ""}`
+     : t.status === "present" ? (t.score == null ? '<span class="note">Kiritilmegen</span>' : t.score) : '<span class="note">—</span>'}</td>
+   ${SRP ? `<td data-l="Sebep">${t.status === "absent" ? `${esc(t.reason)}${t.note ? `<div class="note">${esc(t.note)}</div>` : ""}<button data-ed="${esc(t.id)}">Ózgertiw</button>` : '<span class="note">—</span>'}</td>` : ""}</tr>`).join("")}
+  </tbody></table>` : '<div class="empty">Bul filtr boyınsha pedagog joq.</div>'}`;
+}
+function exportSubj() {
+  const rows = subjRows(); if (!rows.length) return toast("Eksportlaw ushın jazıw joq. Filtrlerdi tekseriń.", true);
+  saveXls("attestaciya_" + av.subj, rowHead(SRP), rows.map(t => rowCells(t.inst, t, SRP)));
+  toast(`Fayl tayarlandı: ${rows.length} jazıw`);
+}
+async function admin() {
+  if (!isAdmin()) { $("#app").innerHTML = '<div class="empty">Admin panelge kiriw ushın Admin PIN kerek.</div>'; return adminLogin(); }
+  $("#app").innerHTML = LOADING; SR = null;
+  try { OV = await rpc("admin_overview", { p_token: tok() }); } catch (e) { $("#app").innerHTML = '<div class="empty">Maǵlıwmat júklenbedi.</div>'; return; }
+  if (OV.ok === false) { $("#app").innerHTML = '<div class="empty">Admin panelge kiriw ushın Admin PIN kerek.</div>'; return adminLogin(); }
+  if (av.subj) { try { await loadAll(); } catch (e) { SR = null; } if (!isAdmin()) return admin(); }
+  drawAdmin();
+}
+function drawAdmin() {
+  const I = OV.institutions, sum = k => I.reduce((a, x) => a + x[k], 0);
+  const sub = av.subj ? OV.subjects.find(s => s.name === av.subj) : null;
+  const S = av.subj && SR ? subjStats() : sub || { total: sum("total"), present: sum("present"), absent: sum("absent"), unmarked: sum("unmarked"), scored: sum("scored") };
+  const pct = S.total ? Math.round(S.present / S.total * 100) : 0;
+  const cards = [[I.length, "Mekemeler", "school", "#3b82f6"], [S.total, "Muǵallimler", "users", "#8b5cf6"], [S.present, "Qatnasqanlar", "check", "#10b981"], [S.absent, "Qatnaspaǵanlar", "x", "#f43f5e"],
+    [S.unmarked, "Belgilenbegenler", "clock", "#64748b"], [pct + "%", "Qatnasıw procenti", "pie", "#06b6d4"], [S.scored, "Nátiyjesi kiritilgenler", "award", "#f59e0b"], [sub ? "—" : sum("review"), "Hújjeti tekseriliwi kerek", "filewarn", "#a855f7"]];
+  $("#app").innerHTML = `<button class="back b3d b3d-blue" data-go="">${ic("back")}Bas betke qaytıw</button>
+  <h2 style="margin-top:6px">Admin panel</h2>
+  <div class="tools"><select id="av-s" aria-label="Pán boyınsha filtr"><option value="">Barlıq pánler</option>${OV.subjects.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join("")}</select></div>
+  <div class="stats">${cards.map(c => `<div class="stat" style="--ac:${c[3]}"><div class="chip">${ic(c[2])}</div><b>${c[0]}</b><span>${c[1]}</span></div>`).join("")}</div>
+  ${subjList()}
+  <h2>PIN kodlar</h2><div class="tools"><button class="b3d b3d-blue" data-act="pins-missing">${ic("check")}PIN joq mekemelerge jaratıw</button>
+   <button class="b3d b3d-rose" data-act="pins-all">${ic("reset")}Barlıq mekemelerge jańa PIN</button>
+   <button class="b3d b3d-purple" data-act="admin-pin">Admin PIN di ózgertiw</button>
+   <button class="b3d b3d-green" data-act="export-all">${ic("down")}Excel (.xls): barlıǵı</button></div>
+  <table><thead><tr><th>Mekeme</th><th>Jazıwlar</th><th>Qatnastı</th><th>Qatnaspadı</th><th>Belgilenbegen</th><th>Ball bar</th><th>%</th><th>PIN</th><th>Ámel</th></tr></thead><tbody>
+  ${I.map(i => `<tr><td data-l="Mekeme">${esc(i.name)}</td><td data-l="Jazıwlar">${i.total}</td><td data-l="Qatnastı">${i.present}</td><td data-l="Qatnaspadı">${i.absent}</td><td data-l="Belgilenbegen">${i.unmarked}</td><td data-l="Ball bar">${i.scored}</td>
+   <td data-l="%">${i.total ? Math.round(i.present / i.total * 100) : 0}%</td><td data-l="PIN">${i.locked ? '<span class="warn">Bloklanǵan</span>' : i.has_pin ? "Bar" : '<span class="warn">Joq</span>'}</td>
+   <td data-l="Ámel"><button data-go="i/${i.id}">Ashıw</button> <button data-newpin="${i.id}">Jańa PIN</button></td></tr>`).join("")}</tbody></table>`;
+  $("#av-s").value = av.subj; $("#av-s").onchange = async e => {
+    av.subj = e.target.value; if (!av.subj) return admin();   // pán alıp taslansa, jańa sanlardı serverden alamız
+    if (!SR) { try { await loadAll(); } catch (x) { SR = null; } if (!isAdmin()) return admin(); }
+    drawAdmin();
+  };
+  if ($("#as-q")) {
+    $("#as-q").oninput = e => { avl.q = e.target.value; const p = e.target.selectionStart; drawAdmin(); const x = $("#as-q"); x.focus(); x.setSelectionRange(p, p); };
+    $("#as-s").onchange = e => { avl.st = e.target.value; drawAdmin(); };
+    $("#as-x").onclick = exportSubj;
+  }
+}
+function showPins(list, title) {
+  dlg(`<h3 style="margin-top:0">${esc(title)}</h3><p class="note warn">PIN lar tek usı ret kórsetiledi. Kóshirip alıń yamasa Excel ge saqlań.</p>
+   <div style="max-height:50vh;overflow:auto"><table><thead><tr><th>Mekeme</th><th>PIN</th></tr></thead><tbody>${list.map(p => `<tr><td data-l="Mekeme">${esc(p.name)}</td><td data-l="PIN"><b>${esc(p.pin)}</b></td></tr>`).join("")}</tbody></table></div>
+   <div class="row"><button id="pc">Kóshiriw</button><button id="px">Excel (.xls)</button><button class="b3d b3d-blue" data-act="close">Jabıw</button></div>`);
+  $("#pc").onclick = async () => { try { await navigator.clipboard.writeText(list.map(p => `${p.name}\t${p.pin}`).join("\n")); toast("Kóshirildi"); } catch (e) { toast("Kóshiriw múmkin bolmadı. Excel ge saqlań.", true); } };
+  $("#px").onclick = () => saveXls("PIN_kodlar", ["Mekeme", "PIN"], list.map(p => [p.name, p.pin]));
+}
+async function genPins(onlyMissing) {
+  if (!onlyMissing && !confirm("Barlıq mekemeler ushın jańa PIN jaratıladı. Eski PIN lar jaramsız boladı. Dawam etiw kerekpe?")) return;
+  const r = await rpc("admin_generate_pins", { p_token: tok(), p_only_missing: !!onlyMissing });
+  if (r.ok === false) return toast(msg(r), true);
+  if (!r.pins.length) return toast("Barlıq mekemelerde PIN bar.");
+  showPins(r.pins, `Jańa PIN lar (${r.pins.length})`); admin();
+}
+async function newPin(id) {
+  const inst = OV.institutions.find(i => i.id === id);
+  if (!confirm(`${inst.name}: jańa PIN jaratıladı. Eski PIN jaramsız boladı. Dawam etiw kerekpe?`)) return;
+  const r = await rpc("admin_set_pin", { p_token: tok(), p_institution: id });
+  if (r.ok === false) return toast(msg(r), true);
+  showPins([{ name: inst.name, pin: r.pin }], "Jańa PIN"); admin();
+}
+function adminPinForm() {
+  dlg(`<h3 style="margin-top:0">Admin PIN di ózgertiw</h3><p class="note">4-12 san. Qáwipsizlik ushın 6 hám onnan kóp sandı usınıs etemiz.</p>
+   <label for="n1">Jańa PIN</label><input id="n1" type="password" inputmode="numeric" maxlength="12" autocomplete="off">
+   <label for="n2">Qaytalań</label><input id="n2" type="password" inputmode="numeric" maxlength="12" autocomplete="off">
+   <div class="err" id="er"></div><div class="row"><button data-act="close">Biykar etiw</button><button class="b3d b3d-purple" id="sv">Saqlaw</button></div>`);
+  $("#sv").onclick = async () => {
+    const a = $("#n1").value.trim(), b = $("#n2").value.trim();
+    if (!/^\d{4,12}$/.test(a)) return $("#er").textContent = ERR.pin_format;
+    if (a !== b) return $("#er").textContent = "PIN lar bir-birine sáykes kelmeydi.";
+    const r = await rpc("admin_set_admin_pin", { p_token: tok(), p_new: a });
+    if (r.ok === false) return $("#er").textContent = msg(r);
+    closeDlg(); toast("Admin PIN ózgertildi");
+  };
+}
+async function exportAll() {
+  toast("Maǵlıwmat jıynalmaqta...");
+  await loadInsts(); const out = []; const ids = INSTS.map(i => i.id);
+  for (let k = 0; k < ids.length; k += 8) {
+    const part = await Promise.all(ids.slice(k, k + 8).map(id => rpc("list_teachers", { p_institution: id, p_token: tok() })));
+    part.forEach((r, j) => { if (r.ok) r.rows.forEach(t => out.push(rowCells(INSTS.find(i => i.id === ids[k + j]).name, t, true))); });
+  }
+  saveXls("attestaciya_barlıǵı", rowHead(true), out); toast(`Fayl tayarlandı: ${out.length} jazıw`);
+}
+
+// ---------- Marshrutlaw hám oqıyalar ----------
+function setup() {
+  $("#app").innerHTML = `<div class="empty"><h3>Baza sazlanbaǵan</h3><p>Fayldıń baslanıwındaǵı <b>CONFIG</b> bólimine Supabase <b>SUPABASE_ANON_KEY</b> (publishable key) kiritiń.</p></div>`;
+}
+function route() {
+  if (!CONFIG.SUPABASE_ANON_KEY || CONFIG.SUPABASE_ANON_KEY.startsWith("__")) return setup();
+  const h = location.hash, m = h.match(/^#\/i\/([0-9a-f-]{36})$/);
+  if (m) detail(m[1]); else if (h === "#/admin") admin(); else home();
+  window.scrollTo(0, 0);
+}
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (g) return go(g.dataset.go);
+  const a = e.target.closest("[data-act]");
+  if (a) { const k = a.dataset.act;
+    if (k === "close") return closeDlg(); if (k === "admin-login") return adminLogin(); if (k === "inst-login") return instLogin();
+    if (k === "logout") return logout(); if (k === "export-detail") return exportDetail(); if (k === "export-all") return exportAll();
+    if (k === "pins-missing") return genPins(true); if (k === "pins-all") return genPins(false); if (k === "admin-pin") return adminPinForm(); }
+  const s = e.target.closest("[data-st]"); if (s) return setStatus(s.dataset.st, s.dataset.v);
+  const x = e.target.closest("[data-ed]"); if (x) return absentForm(D.rows.find(t => t.id === x.dataset.ed));
+  const p = e.target.closest("[data-pe]"); if (p) return personForm(D.rows.find(t => t.id === p.dataset.pe));
+  const n = e.target.closest("[data-newpin]"); if (n) return newPin(n.dataset.newpin);
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.matches(".card")) e.target.click(); });
+document.addEventListener("change", e => { if (e.target.matches("[data-sc]")) setScore(e.target.dataset.sc, e.target.value); });
+window.addEventListener("hashchange", route);
+drawBar(); route();
+</script>
+</body>
+</html>

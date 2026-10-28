@@ -54,7 +54,7 @@ tbody tr:hover{background:rgba(255,255,255,.05)}
 .seg button[aria-pressed=true][data-v=unmarked]{background:rgba(255,255,255,.24);color:#fff}
 .seg button[aria-pressed=true][data-v=present]{background:var(--green);color:#03281a;box-shadow:0 0 16px rgba(45,255,154,.6)}
 .seg button[aria-pressed=true][data-v=absent]{background:var(--red);color:#2a0009;box-shadow:0 0 16px rgba(255,77,109,.6)}
-.score{width:90px}
+.score{width:110px;font-size:18px;font-weight:700}.score.empty{border:2px solid #ff4d6d;background:rgba(255,77,109,.20);color:#fff}.score.empty::placeholder{color:#ffb3c0}.nores{color:#ff6b81;font-weight:700;font-size:16px;line-height:1.25;margin-top:6px}.trow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.cbadge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}.cb-ok{background:rgba(45,255,154,.18);color:#7dffc0}.cb-warn{background:rgba(255,184,74,.20);color:#ffd28a}.cb-none{background:rgba(148,163,184,.22);color:#cbd5e1}.cnums{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:13px}.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#14c97a,#2dff9a)}.blab{font-size:12px;opacity:.85}.inst{font-size:20px;font-weight:700;color:#d6e4ff;text-decoration:underline;text-underline-offset:4px}
 .warn{color:var(--amber)}
 .back{margin-bottom:8px}
 dialog{color:var(--ink);background:rgba(18,24,72,.85);border-radius:16px;padding:20px;width:min(470px,94vw)}
@@ -223,15 +223,37 @@ async function home() {
   $("#so").onchange = e => { view.sort = e.target.value; drawGrid(); };
   $("#clr").onclick = () => { view.type = ""; view.sort = "name"; home(); };
   try { await loadInsts(); } catch (e) { $("#grid").innerHTML = '<div class="empty">Maǵlıwmat júklenbedi. Betti jańalap kóriń.</div>'; return; }
-  drawGrid();
+  drawGrid(); loadCounts();
+}
+// Kartochkadaǵı qatnasıw sanları: ashıq list_teachers arqalı alınadı, tayar bolǵan sayın kartochkalar jańalanadı
+const CNT = {}; let cseq = 0;
+function cardBadge(i) {
+  const c = CNT[i.id]; if (!c || !c.total) return "";
+  return c.present + c.absent === 0 ? '<span class="cbadge cb-none">Belgilew baslanbaǵan</span>'
+    : c.unmarked === 0 ? '<span class="cbadge cb-ok">Tolıq belgilengen</span>' : '<span class="cbadge cb-warn">Belgilenbegenleri bar</span>';
+}
+function cardExtra(i) {
+  const c = CNT[i.id]; if (!c) return "";
+  const m = c.present + c.absent, pct = c.total ? Math.round(m / c.total * 100) : 0;
+  return `<div class="cnums"><span>Qatnastı: <b>${c.present}</b></span><span>Qatnaspadı: <b>${c.absent}</b></span><span>Belgilenbegen: <b>${c.unmarked}</b></span></div>
+    <div class="bar" role="progressbar" aria-label="Belgilengen" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div><div class="blab">Belgilengen: ${m} / ${c.total} (${pct}%)</div>`;
+}
+async function loadCounts() {
+  const my = ++cseq, ids = INSTS.map(i => i.id);
+  for (let k = 0; k < ids.length; k += 8) {
+    const part = await Promise.all(ids.slice(k, k + 8).map(id => rpc("list_teachers", { p_institution: id, p_token: tok() }).catch(() => null)));
+    if (my !== cseq || !$("#grid")) return;   // basqa betke ótilgen bolsa toqtaymız
+    part.forEach((r, j) => { if (r && r.ok !== false && r.rows) { const c = f => r.rows.filter(t => t.status === f).length; CNT[ids[k + j]] = { total: r.rows.length, present: c("present"), absent: c("absent"), unmarked: c("unmarked") }; } });
+    drawGrid();
+  }
 }
 function drawGrid() {
   const rows = INSTS.filter(i => !view.type || grp(i.type) === view.type)
     .sort((a, b) => view.sort === "teachers" ? b.teachers - a.teachers : nat(a.name, b.name));
   $("#cnt").textContent = `Tabılǵan mekemeler: ${rows.length}`;
   $("#grid").innerHTML = rows.length ? rows.map(i => `<div class="card" tabindex="0" role="link" data-go="i/${i.id}" aria-label="${esc(i.name)}: muǵallimlerdi ashıw">
-    <h3>${esc(i.name)}</h3><div class="type">${GROUP_NAME[grp(i.type)]}</div>
-    <div class="nums"><span>Muǵallimler: <b>${i.teachers}</b></span><span>Arızalar: <b>${i.rows}</b></span></div></div>`).join("")
+    <h3>${esc(i.name)}</h3><div class="trow"><div class="type">${GROUP_NAME[grp(i.type)]}</div>${cardBadge(i)}</div>
+    <div class="nums"><span>Muǵallimler: <b>${i.teachers}</b></span><span>Arızalar: <b>${i.rows}</b></span></div>${cardExtra(i)}</div>`).join("")
     : '<div class="empty">Hesh nárse tabılmadı. Filtrlerdi tazalań.</div>';
 }
 
@@ -265,8 +287,8 @@ function drawDetail() {
   ${list.length ? `<table><thead><tr><th>№</th><th>F.A.Á.</th><th>Pán</th><th>Kategoriya</th><th>Qatnasıw</th><th>Ball</th>${D.priv ? "<th>Sebep</th>" : ""}${isAdmin() ? "<th>Ámel</th>" : ""}</tr></thead><tbody>
   ${list.map((t, n) => `<tr><td data-l="№">${n + 1}</td><td data-l="F.A.Á.">${esc(t.name)}<div class="note">${esc(t.id)}</div></td><td data-l="Pán">${esc(t.subject)}</td><td data-l="Kategoriya">${esc(catName(t.category))}</td>
    <td data-l="Qatnasıw">${D.priv ? `<div class="seg" role="group" aria-label="Qatnasıw jaǵdayı">${Object.entries(ST).map(([k, v]) => `<button data-st="${esc(t.id)}" data-v="${k}" aria-pressed="${t.status === k}">${v}</button>`).join("")}</div>` : pill(t)}</td>
-   <td data-l="Ball">${D.priv && t.status === "present" ? `<input class="score" type="number" min="0" max="100" step="0.5" data-sc="${esc(t.id)}" value="${t.score ?? ""}" placeholder="0-100" aria-label="Ball">${t.score == null ? '<div class="note">Nátiyje kiritilmegen</div>' : ""}`
-     : t.status === "present" ? (t.score == null ? '<span class="note">Kiritilmegen</span>' : t.score) : '<span class="note">—</span>'}</td>
+   <td data-l="Ball">${D.priv && t.status === "present" ? `<input class="score${t.score == null ? " empty" : ""}" type="number" min="0" max="100" step="0.5" data-sc="${esc(t.id)}" value="${t.score ?? ""}" placeholder="0-100" aria-label="Ball">${t.score == null ? '<div class="nores">Nátiyje kiritilmegen</div>' : ""}`
+     : t.status === "present" ? (t.score == null ? '<span class="nores">Kiritilmegen</span>' : t.score) : '<span class="note">—</span>'}</td>
    ${D.priv ? `<td data-l="Sebep">${t.status === "absent" ? `${esc(t.reason)}${t.note ? `<div class="note">${esc(t.note)}</div>` : ""}<button data-ed="${esc(t.id)}">Ózgertiw</button>` : '<span class="note">—</span>'}</td>` : ""}
    ${isAdmin() ? `<td data-l="Ámel"><button data-pe="${esc(t.id)}">Maǵlıwmat</button></td>` : ""}</tr>`).join("")}
   </tbody></table>` : '<div class="empty">Bul filtr boyınsha jazıw joq.</div>'}`;
@@ -415,10 +437,10 @@ function subjList() {
    <button class="b3d b3d-green" id="as-x">${ic("down")}Excel (.xls)</button></div>
   ${list.length ? `<table><thead><tr><th>№</th><th>F.A.Á.</th><th>Mekeme</th>${SRP ? "<th>Telefon</th>" : ""}<th>Kategoriya</th><th>Qatnasıw</th><th>Ball</th>${SRP ? "<th>Sebep</th>" : ""}</tr></thead><tbody>
   ${list.map((t, n) => `<tr><td data-l="№">${n + 1}</td><td data-l="F.A.Á.">${esc(t.name)}<div class="note">${esc(t.id)}</div></td>
-   <td data-l="Mekeme"><a href="#/i/${esc(t.instId)}">${esc(t.inst)}</a></td>${SRP ? `<td data-l="Telefon">${phoneLink(t.phone)}</td>` : ""}<td data-l="Kategoriya">${esc(catName(t.category))}</td>
+   <td data-l="Mekeme"><a class="inst" href="#/i/${esc(t.instId)}">${esc(t.inst)}</a></td>${SRP ? `<td data-l="Telefon">${phoneLink(t.phone)}</td>` : ""}<td data-l="Kategoriya">${esc(catName(t.category))}</td>
    <td data-l="Qatnasıw">${SRP ? `<div class="seg" role="group" aria-label="Qatnasıw jaǵdayı">${Object.entries(ST).map(([k, v]) => `<button data-st="${esc(t.id)}" data-v="${k}" aria-pressed="${t.status === k}">${v}</button>`).join("")}</div>` : pill(t)}</td>
-   <td data-l="Ball">${SRP && t.status === "present" ? `<input class="score" type="number" min="0" max="100" step="0.5" data-sc="${esc(t.id)}" value="${t.score ?? ""}" placeholder="0-100" aria-label="Ball">${t.score == null ? '<div class="note">Nátiyje kiritilmegen</div>' : ""}`
-     : t.status === "present" ? (t.score == null ? '<span class="note">Kiritilmegen</span>' : t.score) : '<span class="note">—</span>'}</td>
+   <td data-l="Ball">${SRP && t.status === "present" ? `<input class="score${t.score == null ? " empty" : ""}" type="number" min="0" max="100" step="0.5" data-sc="${esc(t.id)}" value="${t.score ?? ""}" placeholder="0-100" aria-label="Ball">${t.score == null ? '<div class="nores">Nátiyje kiritilmegen</div>' : ""}`
+     : t.status === "present" ? (t.score == null ? '<span class="nores">Kiritilmegen</span>' : t.score) : '<span class="note">—</span>'}</td>
    ${SRP ? `<td data-l="Sebep">${t.status === "absent" ? `${esc(t.reason)}${t.note ? `<div class="note">${esc(t.note)}</div>` : ""}<button data-ed="${esc(t.id)}">Ózgertiw</button>` : '<span class="note">—</span>'}</td>` : ""}</tr>`).join("")}
   </tbody></table>` : '<div class="empty">Bul filtr boyınsha pedagog joq.</div>'}`;
 }
